@@ -268,6 +268,18 @@ function App() {
                 onPageSelect={handlePageSelect}
                 onPdfLoad={handlePdfLoad}
               />
+
+              {/* Floating Action Button */}
+              <div className="floating-action-button">
+                <button 
+                  onClick={handleAddElement} 
+                  className="btn btn-primary fab-btn"
+                  title={`Add to Page ${selectedPage}`}
+                >
+                  ➕
+                </button>
+                <div className="fab-label">Add to Page {selectedPage}</div>
+              </div>
             </div>
           )}
 
