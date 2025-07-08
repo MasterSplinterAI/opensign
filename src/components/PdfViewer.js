@@ -10,7 +10,8 @@ const PdfViewer = ({
   onSignatureResize,
   selectedPage,
   onPageSelect,
-  onPdfLoad 
+  onPdfLoad,
+  onPageWidthChange
 }) => {
   // console.log('PdfViewer rendered with pdfFile:', pdfFile);
   const [numPages, setNumPages] = useState(null);
@@ -23,14 +24,19 @@ const PdfViewer = ({
       const container = document.querySelector('.pdf-viewer');
       if (container) {
         const containerWidth = container.offsetWidth - 64; // account for padding
-        setPageWidth(Math.min(containerWidth, 800));
+        const newPageWidth = Math.min(containerWidth, 800);
+        setPageWidth(newPageWidth);
+        // Notify parent component of page width change
+        if (onPageWidthChange) {
+          onPageWidthChange(newPageWidth);
+        }
       }
     };
 
     updatePageWidth();
     window.addEventListener('resize', updatePageWidth);
     return () => window.removeEventListener('resize', updatePageWidth);
-  }, []);
+  }, [onPageWidthChange]);
 
   useEffect(() => {
     if (pdfFile) {

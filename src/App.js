@@ -17,6 +17,7 @@ function App() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedPage, setSelectedPage] = useState(1);
   const [numPages, setNumPages] = useState(null);
+  const [pageWidth, setPageWidth] = useState(600);
   const fileInputRef = useRef(null);
 
   const handleFileUpload = async (file) => {
@@ -60,6 +61,10 @@ function App() {
 
   const handlePdfLoad = (pdfInfo) => {
     setNumPages(pdfInfo.numPages);
+  };
+
+  const handlePageWidthChange = (width) => {
+    setPageWidth(width);
   };
 
   const handleSignatureSave = (signatureDataUrl) => {
@@ -146,44 +151,29 @@ function App() {
           const imageBytes = await fetch(signature.dataUrl).then(res => res.arrayBuffer());
           const image = await pdfDocCopy.embedPng(imageBytes);
           
-          // Get actual page dimensions
-          const { width: pageWidth, height: pageHeight } = page.getSize();
+          // Get actual PDF page dimensions
+          const { width: pdfPageWidth, height: pdfPageHeight } = page.getSize();
           
-          // Get the displayed page dimensions from the DOM
-          const displayedPage = document.querySelector('.pdf-page canvas');
-          if (displayedPage) {
-            const displayedWidth = displayedPage.offsetWidth;
-            const displayedHeight = displayedPage.offsetHeight;
-            
-            // Calculate scaling factors
-            const scaleX = pageWidth / displayedWidth;
-            const scaleY = pageHeight / displayedHeight;
-            
-            // Scale the signature position and size
-            const scaledX = signature.x * scaleX;
-            const scaledY = signature.y * scaleY;
-            const scaledWidth = signature.width * scaleX;
-            const scaledHeight = signature.height * scaleY;
-            
-            // Calculate signature position (PDF coordinates start from bottom-left)
-            const pdfY = pageHeight - scaledY - scaledHeight;
-            
-            page.drawImage(image, {
-              x: scaledX,
-              y: pdfY,
-              width: scaledWidth,
-              height: scaledHeight,
-            });
-          } else {
-            // Fallback to original method if DOM element not found
-            const pdfY = pageHeight - signature.y - signature.height;
-            page.drawImage(image, {
-              x: signature.x,
-              y: pdfY,
-              width: signature.width,
-              height: signature.height,
-            });
-          }
+          // Use the pageWidth from PdfViewer for accurate scaling
+          // The pageWidth is the width at which the PDF is rendered in the viewer
+          const scaleX = pdfPageWidth / pageWidth;
+          const scaleY = pdfPageHeight / (pageWidth * (pdfPageHeight / pdfPageWidth)); // Calculate height based on aspect ratio
+          
+          // Scale the signature position and size
+          const scaledX = signature.x * scaleX;
+          const scaledY = signature.y * scaleY;
+          const scaledWidth = signature.width * scaleX;
+          const scaledHeight = signature.height * scaleY;
+          
+          // Calculate signature position (PDF coordinates start from bottom-left)
+          const pdfY = pdfPageHeight - scaledY - scaledHeight;
+          
+          page.drawImage(image, {
+            x: scaledX,
+            y: pdfY,
+            width: scaledWidth,
+            height: scaledHeight,
+          });
         }
       }
 
@@ -267,6 +257,7 @@ function App() {
                 selectedPage={selectedPage}
                 onPageSelect={handlePageSelect}
                 onPdfLoad={handlePdfLoad}
+                onPageWidthChange={handlePageWidthChange}
               />
 
               {/* Floating Action Button */}
