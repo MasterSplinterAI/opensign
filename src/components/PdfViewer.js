@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Document, Page } from 'react-pdf';
 import { Rnd } from 'react-rnd';
+import VerificationBadge from './VerificationBadge';
 
 const PdfViewer = ({ 
   pdfFile, 
@@ -203,6 +204,12 @@ const PdfViewer = ({
                   >
                     ×
                   </button>
+                  
+                  {/* Verification Badge */}
+                  <VerificationBadge 
+                    verification={signature.verification}
+                    isVisible={true}
+                  />
                 </div>
               </Rnd>
             ))}

@@ -4,8 +4,9 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import PdfViewer from './components/PdfViewer';
 import SignatureModal from './components/SignatureModal';
 import FileUpload from './components/FileUpload';
-import { PDFDocument } from 'pdf-lib';
+import { PDFDocument, rgb } from 'pdf-lib';
 import { saveAs } from 'file-saver';
+import { generateVerificationData } from './utils/verification';
 import './App.css';
 
 function App() {
@@ -91,6 +92,7 @@ function App() {
         width = Math.max(width, 80);
         height = Math.max(height, 40);
         
+        const verificationData = generateVerificationData();
         const newSignature = {
           id: Date.now(),
           dataUrl: signatureDataUrl,
@@ -98,7 +100,8 @@ function App() {
           y: currentSignPosition.y,
           pageNumber: currentSignPosition.pageNumber,
           width: width,
-          height: height
+          height: height,
+          verification: verificationData
         };
         setSignatures([...signatures, newSignature]);
         setIsSignatureModalOpen(false);
@@ -168,12 +171,45 @@ function App() {
           // Calculate signature position (PDF coordinates start from bottom-left)
           const pdfY = pdfPageHeight - scaledY - scaledHeight;
           
+          // Draw the signature image
           page.drawImage(image, {
             x: scaledX,
             y: pdfY,
             width: scaledWidth,
             height: scaledHeight,
           });
+          
+          // Add verification text if verification data exists
+          if (signature.verification) {
+            const fontSize = Math.min(scaledWidth * 0.1, 8); // Scale font size based on signature width
+            // Place text to the right of the signature
+            const textX = scaledX + scaledWidth + 4;
+            let textY = pdfY + scaledHeight - fontSize; // Align with top of signature
+            
+            // Draw verification text
+            page.drawText(`${signature.verification.verifiedBy} Verified`, {
+              x: textX,
+              y: textY,
+              size: fontSize,
+              color: rgb(0.2, 0.6, 0.2), // Green color
+            });
+            textY -= fontSize + 1;
+            // Draw timestamp (formatted)
+            page.drawText(signature.verification.formatted, {
+              x: textX,
+              y: textY,
+              size: fontSize * 0.8,
+              color: rgb(0.4, 0.4, 0.4), // Gray color
+            });
+            textY -= fontSize * 0.8 + 1;
+            // Draw hash
+            page.drawText(`Hash: ${signature.verification.hash}`, {
+              x: textX,
+              y: textY,
+              size: fontSize * 0.7,
+              color: rgb(0.3, 0.3, 0.3), // Dark gray color
+            });
+          }
         }
       }
 

@@ -1,0 +1,135 @@
+.verification-badge {
+  position: absolute;
+  top: -28px;
+  right: -8px;
+  margin-bottom: 0;
+  margin-right: 0;
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 1100;
+  min-width: 120px;
+  max-width: 200px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  user-select: none;
+}
+
+.verification-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.verification-badge.expanded {
+  min-width: 180px;
+  max-width: 250px;
+}
+
+.verification-header {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.verification-icon {
+  font-size: 12px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.verification-text {
+  font-size: 10px;
+  font-weight: 600;
+  flex: 1;
+}
+
+.verification-toggle {
+  font-size: 14px;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.8);
+  transition: transform 0.2s ease;
+}
+
+.verification-badge.expanded .verification-toggle {
+  transform: rotate(180deg);
+}
+
+.verification-details {
+  background: rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 6px 8px;
+  border-radius: 0 0 12px 12px;
+}
+
+.verification-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+  font-size: 9px;
+  line-height: 1.2;
+}
+
+.verification-item:last-child {
+  margin-bottom: 0;
+}
+
+.verification-item .label {
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+  margin-right: 4px;
+}
+
+.verification-item .value {
+  color: white;
+  font-weight: 600;
+  text-align: right;
+  word-break: break-all;
+}
+
+.verification-item .value.hash {
+  font-family: 'Courier New', monospace;
+  font-size: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 1px 3px;
+  border-radius: 3px;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.signature-overlay .signature-delete {
+  z-index: 1200;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .verification-badge {
+    font-size: 9px;
+    min-width: 100px;
+    max-width: 160px;
+  }
+  
+  .verification-badge.expanded {
+    min-width: 150px;
+    max-width: 200px;
+  }
+  
+  .verification-text {
+    font-size: 9px;
+  }
+  
+  .verification-item {
+    font-size: 8px;
+  }
+  
+  .verification-item .value.hash {
+    font-size: 7px;
+    max-width: 60px;
+  }
+} 
